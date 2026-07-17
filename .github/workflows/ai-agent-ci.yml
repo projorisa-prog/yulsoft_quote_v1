@@ -29,4 +29,4 @@ jobs:
           RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
         run: |
-          python -uscripts/monitor_deploy.py
+          python -u scripts/monitor_deploy.py
