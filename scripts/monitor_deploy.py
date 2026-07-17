@@ -144,7 +144,7 @@ while check_count < 20:  # 최대 10분 동안 관측 (30초 * 20)
     if status == "live":
         print("🎉 축하합니다! 배포가 성공적으로 완료되어 서비스가 Live 상태입니다.")
         sys.exit(0)
-    elif status in ["failed", "deactivated"]:
+    elif status in ["failed", "deactivated", "build_failed"]:
         print("❌ 배포 실패 감지! 자가 치유(Self-Healing) 프로세스를 가동합니다.")
         logs = get_error_logs(deploy_id)
         ai_solution = ask_ai_agent_to_fix(logs)
