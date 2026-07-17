@@ -49,14 +49,20 @@ def get_error_logs(deploy_id):
     return ""
 
 def ask_ai_agent_to_fix(error_logs):
-    """OpenAI API를 사용하여 에러 원인을 분석하고 코드를 수정합니다."""
-    if not OPENAI_API_KEY:
-        print("⚠️ OPENAI_API_KEY가 없어 시뮬레이션 수정 모드로 진입합니다.")
+    """네모트론(Nemotron) API를 사용하여 에러 원인을 분석하고 코드를 수정합니다."""
+    # GitHub Secrets에서 가져올 API Key 명칭에 맞게 수정
+    NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY") 
+    
+    if not NVIDIA_API_KEY:
+        print("⚠️ NVIDIA_API_KEY가 없어 자가 치유를 진행할 수 없습니다.")
         return None
 
-    client = OpenAI(api_key=OPENAI_API_KEY)
+    # OpenAI SDK를 활용하여 네모트론 엔드포인트와 연결합니다.
+    client = OpenAI(
+        base_url="https://integrate.api.nvidia.com/v1",
+        api_key=NVIDIA_API_KEY
+    )
     
-    # AI에게 우리가 정한 견적 모델의 파일 구조와 기술 명세(app/main.py 등)를 프롬프트로 줍니다.
     prompt = f"""
     당신은 율소프트 개발 팀의 '자가 치유 디버깅 에이전트'입니다.
     현재 FastAPI 백엔드를 Render에 배포하는 도중 에러가 발생하여 배포가 실패했습니다.
@@ -67,9 +73,9 @@ def ask_ai_agent_to_fix(error_logs):
     [요구 사항]
     1. 이 에러를 발생시킨 원인을 분석하세요.
     2. 이를 해결하기 위해 프로젝트 내 어떤 파일(`app/main.py` 또는 `requirements.txt` 등)을 어떻게 수정해야 하는지 알려주세요.
-    3. 반드시 파이썬 코드가 직접 읽어서 파싱할 수 있도록 아래 형식을 엄격히 지켜 응답해주세요.
+    3. 반드시 파이썬 코드가 직접 읽어서 파싱할 수 있도록 아래 형식을 엄격히 지켜 응답해주세요. 다른 부연 설명 없이 형식만 맞춰서 출력해야 합니다.
     
-    [응답 형식 예시]
+    [응답 형식]
     FILE: 파일경로
     CODE:
     수정된 전체 파일 코드 내용
@@ -77,13 +83,13 @@ def ask_ai_agent_to_fix(error_logs):
     
     try:
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model="nvidia/llama-3.1-nemotron-70b-instruct", # 💡 사용 중이신 네모트론 모델명으로 지정
             messages=[{"role": "user", "content": prompt}],
             temperature=0.2
         )
         return response.choices[0].message.content
     except Exception as e:
-        print(f"LLM 호출 실패: {e}")
+        print(f"네모트론 모델 호출 실패: {e}")
         return None
 
 def apply_patch(ai_response):
