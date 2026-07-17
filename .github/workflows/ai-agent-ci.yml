@@ -1,0 +1,32 @@
+name: Yulsoft AI Agent CI/CD
+
+on:
+  push:
+    branches: [ main ]  # main 브랜치에 push될 때 작동 (본인의 주 브랜치명에 맞게 수정 가능)
+
+jobs:
+  monitor-and-heal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # AI가 코드를 수정하고 Push할 수 있도록 전체 Git 히스토리를 가져옵니다.
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      # Render 배포를 모니터링하고 실패 시 자가 치유를 시도하는 스크립트 실행
+      - name: Run Deploy Monitor Agent
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python scripts/monitor_deploy.py
