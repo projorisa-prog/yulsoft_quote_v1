@@ -1,0 +1,506 @@
+/* ==========================================
+   견적서 기본 CSS (모든 디자인 공통)
+   ========================================== */
+
+/* CSS Variables - Design Key별로 오버라이드됨 */
+:root {
+    /* 기본값 (classic 기준) */
+    --primary: #1a1a2e;
+    --primary-light: #2d2d44;
+    --accent: #c49a6c;
+    --accent-light: #e8c5a0;
+    --text-primary: #1a1a2e;
+    --text-secondary: #4a4a5a;
+    --text-muted: #888;
+    --border-color: #ddd;
+    --border-light: #eee;
+    --bg-white: #ffffff;
+    --bg-alt: #f8f9fa;
+    --bg-header: #1a1a2e;
+    --radius: 0;
+    --shadow: none;
+    --shadow-hover: 0 2px 8px rgba(0,0,0,0.1);
+    --font-heading: 'Noto Serif KR', serif;
+    --font-body: 'Pretendard', 'Noto Sans KR', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --table-header-bg: #1a1a2e;
+    --table-header-color: #fff;
+    --table-row-hover: #fafafa;
+    --summary-bg: #f8f9fa;
+    --footer-border: #1a1a2e;
+}
+
+/* Reset & Base */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-body);
+    font-size: 10pt;
+    line-height: 1.5;
+    color: var(--text-primary);
+    background: var(--bg-white);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.quote-container {
+    max-width: 210mm; /* A4 width */
+    margin: 0 auto;
+    padding: 0;
+    background: var(--bg-white);
+}
+
+/* ==========================================
+   Header Section
+   ========================================== */
+.quote-header {
+    border-bottom: 3px solid var(--primary);
+    padding: 20px 0;
+    margin-bottom: 24px;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.quote-title {
+    font-family: var(--font-heading);
+    font-size: 24pt;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: -0.02em;
+}
+
+.quote-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--accent);
+    color: white;
+    font-size: 8pt;
+    font-weight: 600;
+    border-radius: var(--radius);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.quote-meta {
+    text-align: right;
+}
+
+.quote-number {
+    font-family: var(--font-mono);
+    font-size: 11pt;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.quote-status {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 7.5pt;
+    font-weight: 600;
+    border-radius: 3px;
+    text-transform: uppercase;
+}
+
+.status-draft { background: #fff3cd; color: #856404; }
+.status-completed { background: #d4edda; color: #155724; }
+.status-converted { background: #cce5ff; color: #004085; }
+.status-expired { background: #f8d7da; color: #721c24; }
+
+.header-divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 50%, transparent 100%);
+    margin-bottom: 16px;
+}
+
+.header-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.info-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.info-label {
+    font-size: 8pt;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+}
+
+.info-value {
+    font-size: 10pt;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.info-value.company {
+    font-family: var(--font-heading);
+    font-size: 12pt;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* ==========================================
+   Items Table
+   ========================================== */
+.items-section {
+    margin-bottom: 24px;
+}
+
+.section-title {
+    font-family: var(--font-heading);
+    font-size: 12pt;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9.5pt;
+}
+
+.items-table thead {
+    background: var(--table-header-bg);
+    color: var(--table-header-color);
+}
+
+.items-table th {
+    padding: 12px 8px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 9pt;
+    letter-spacing: 0.02em;
+    border: none;
+}
+
+.items-table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: middle;
+}
+
+.items-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.items-table tbody tr:hover {
+    background: var(--table-row-hover);
+}
+
+/ * Column widths */
+.col-no { width: 40px; }
+.col-area { width: 12%; }
+.col-task { width: 28%; }
+.col-days { width: 15%; }
+.col-qty { width: 8%; }
+.col-unit { width: 12%; }
+.col-total { width: 12%; }
+.col-exclude { width: 13%; }
+
+.items-table td.col-no {
+    text-align: center;
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+}
+
+.items-table td.col-area {
+    font-weight: 500;
+    color: var(--primary);
+}
+
+.items-table td.col-task {
+    text-align: left;
+    padding-left: 12px;
+}
+
+.items-table td.col-days {
+    text-align: center;
+}
+
+.days-badge {
+    display: inline-flex;
+    gap: 2px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.day-tag {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    font-size: 7.5pt;
+    font-weight: 600;
+    border-radius: 3px;
+    background: var(--bg-alt);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+}
+
+.day-tag.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.items-table td.col-qty {
+    text-align: center;
+    font-family: var(--font-mono);
+}
+
+.items-table td.col-unit,
+.items-table td.col-total {
+    text-align: right;
+    padding-right: 12px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+}
+
+.items-table td.col-total {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.items-table td.col-exclude {
+    font-size: 8.5pt;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.memo-text {
+    display: block;
+    margin-top: 4px;
+    font-size: 8pt;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* ==========================================
+   Summary Section
+   ========================================== */
+.summary-section {
+    margin-bottom: 24px;
+}
+
+.summary-table {
+    width: 100%;
+    max-width: 320px;
+    margin-left: auto;
+    border-collapse: collapse;
+    background: var(--summary-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.summary-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.summary-table tr:last-child td {
+    border-bottom: none;
+}
+
+.summary-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+    width: 40%;
+}
+
+.summary-value {
+    text-align: right;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.summary-table .highlight {
+    background: var(--primary);
+    color: white;
+}
+
+.summary-table .highlight .summary-label,
+.summary-table .highlight .summary-value {
+    color: white;
+}
+
+.summary-table .vat-row {
+    background: var(--accent-light);
+}
+
+.summary-table .total-row {
+    font-size: 11pt;
+    background: var(--primary-light);
+}
+
+.summary-table .total-row .summary-label,
+.summary-table .total-row .summary-value {
+    color: var(--primary);
+}
+
+/* ==========================================
+   Footer / Signature
+   ========================================== */
+.footer-section {
+    border-top: 2px solid var(--footer-border);
+    padding-top: 24px;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.sign-block {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.sign-label {
+    font-size: 9pt;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.sign-line {
+    height: 40px;
+    border-bottom: 1px solid var(--text-muted);
+    position: relative;
+}
+
+.sign-name {
+    position: absolute;
+    bottom: -24px;
+    left: 0;
+    font-size: 10pt;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.sign-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 8.5pt;
+    color: var(--text-secondary);
+}
+
+.sign-detail-row {
+    display: flex;
+    gap: 8px;
+}
+
+.sign-detail-label {
+    color: var(--text-muted);
+    font-weight: 500;
+    min-width: 60px;
+}
+
+.sign-detail-value {
+    color: var(--text-primary);
+}
+
+/* ==========================================
+   Action Bar (Web View Only)
+   ========================================== */
+.action-bar {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px;
+    border-top: 1px solid var(--border-light);
+    margin-top: 24px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-size: 9.5pt;
+    font-weight: 500;
+    font-family: var(--font-body);
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-light);
+    box-shadow: var(--shadow-hover);
+}
+
+.btn-secondary {
+    background: var(--bg-alt);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--border-light);
+    box-shadow: var(--shadow-hover);
+}
+
+/* ==========================================
+   Utility Classes
+   ========================================== */
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.font-mono { font-family: var(--font-mono); }
+.font-heading { font-family: var(--font-heading); }
+
+.no-print {
+    display: block;
+}
+
+@media print {
+    .no-print { display: none !important; }
+    .action-bar { display: none !important; }
+    .quote-container { max-width: none; }
+    body { font-size: 9.5pt; }
+}

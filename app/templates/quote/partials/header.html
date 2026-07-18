@@ -1,0 +1,50 @@
+<header class="quote-header">
+    <div class="header-top">
+        <div class="supplier-info">
+            <h1 class="company-name">{{ supplier.company_name }}</h1>
+            <div class="company-details">
+                <span>대표자: {{ supplier.ceo_name }}</span>
+                <span>사업자등록번호: {{ supplier.biz_reg_no[:3] }}-{{ supplier.biz_reg_no[3:5] }}-{{ supplier.biz_reg_no[5:] }}</span>
+                <span>주소: {{ supplier.address }}</span>
+                <span>업태/종목: {{ supplier.business_type }} / {{ supplier.business_item }}</span>
+                <span>TEL: {{ supplier.phone }} / E-mail: {{ supplier.email }}</span>
+            </div>
+        </div>
+        <div class="quote-meta">
+            <div class="quote-title">견적서</div>
+            <div class="quote-number">No. {{ quote_number }}</div>
+            <div class="quote-date">작성일: {{ created_at.strftime('%Y-%m-%d') }}</div>
+            <div class="quote-valid">유효기간: {{ expires_at.strftime('%Y-%m-%d') }}까지</div>
+        </div>
+    </div>
+    
+    <div class="header-bottom">
+        <div class="customer-info">
+            <h3>공급받는자 (고객/현장)</h3>
+            <table class="info-table">
+                <tr>
+                    <th>상호/성명</th>
+                    <td>{{ customer.name }}</td>
+                    <th>연락처</th>
+                    <td>{{ customer.phone }}</td>
+                </tr>
+                <tr>
+                    <th>사업자등록번호</th>
+                    <td>{{ customer.get('biz_reg_no', '-') }}</td>
+                    <th>이메일</th>
+                    <td>{{ customer.get('email', '-') }}</td>
+                </tr>
+                <tr>
+                    <th>주소</th>
+                    <td colspan="3">{{ customer.address }} {{ customer.get('detail_address', '') }}</td>
+                </tr>
+                <tr>
+                    <th>건물유형</th>
+                    <td>{{ customer.building_type }}</td>
+                    <th>면적</th>
+                    <td>{{ customer.get('area_pyeong', '-') }}평</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</header>

@@ -1,0 +1,67 @@
+/* ==========================================
+   Classic Design - 신뢰/관공서/대형빌딩
+   ========================================== */
+
+.design-classic {
+    --primary: #1a1a2e;
+    --primary-light: #2d2d44;
+    --accent: #c49a6c;
+    --accent-light: #f0e6da;
+    --text-primary: #1a1a2e;
+    --text-secondary: #3d3d4d;
+    --text-muted: #888;
+    --border-color: #ddd;
+    --border-light: #eee;
+    --bg-white: #ffffff;
+    --bg-alt: #f8f9fa;
+    --bg-header: #1a1a2e;
+    --radius: 0;
+    --shadow: none;
+    --shadow-hover: 0 2px 8px rgba(0,0,0,0.08);
+    --font-heading: 'Noto Serif KR', serif;
+    --font-body: 'Pretendard', 'Noto Sans KR', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --table-header-bg: #1a1a2e;
+    --table-header-color: #fff;
+    --table-row-hover: #fafafa;
+    --summary-bg: #fafafa;
+    --footer-border: #1a1a2e;
+}
+
+.design-classic .quote-title {
+    font-weight: 700;
+}
+
+.design-classic .quote-badge {
+    background: var(--accent);
+}
+
+.design-classic .header-divider {
+    background: var(--primary);
+    height: 2px;
+}
+
+.design-classic .section-title {
+    border-bottom-color: var(--accent);
+}
+
+.design-classic .items-table thead {
+    background: var(--primary);
+}
+
+.design-classic .day-tag.active {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.design-classic .summary-table .highlight {
+    background: var(--primary);
+}
+
+.design-classic .summary-table .total-row {
+    background: var(--primary-light);
+}
+
+.design-classic .footer-section {
+    border-top-color: var(--primary);
+}

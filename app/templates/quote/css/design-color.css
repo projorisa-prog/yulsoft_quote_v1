@@ -1,0 +1,122 @@
+/* ==========================================
+   Color Design - 젊은 감각/카페/소형상가
+   ========================================== */
+
+.design-color {
+    --primary: #2e4057;
+    --primary-light: #3d5270;
+    --accent: #e85d75;
+    --accent-light: #fce4e8;
+    --text-primary: #2e4057;
+    --text-secondary: #4a5a72;
+    --text-muted: #9aa5b1;
+    --border-color: #dfe4ea;
+    --border-light: #eef1f4;
+    --bg-white: #ffffff;
+    --bg-alt: #f8f9fa;
+    --bg-header: #2e4057;
+    --radius: 12px;
+    --shadow: 0 6px 24px rgba(46, 64, 87, 0.08);
+    --shadow-hover: 0 12px 40px rgba(46, 64, 87, 0.12);
+    --font-heading: 'Pretendard', 'Noto Sans KR', sans-serif;
+    --font-body: 'Pretendard', 'Noto Sans KR', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --table-header-bg: #2e4057;
+    --table-header-color: #fff;
+    --table-row-hover: #fdfdff;
+    --summary-bg: #f8f9fa;
+    --footer-border: #e85d75;
+}
+
+.design-color .quote-title {
+    font-weight: 700;
+}
+
+.design-color .quote-badge {
+    background: linear-gradient(135deg, var(--accent) 0%, #f06a85 100%);
+    border-radius: 8px;
+}
+
+.design-color .header-divider {
+    background: linear-gradient(90deg, var(--accent) 0%, #f06a85 100%);
+    height: 3px;
+}
+
+.design-color .section-title {
+    border-bottom-color: var(--accent);
+    color: var(--primary);
+}
+
+.design-color .items-table thead {
+    background: var(--primary);
+}
+
+.design-color .items-table th {
+    font-weight: 600;
+}
+
+.design-color .day-tag {
+    border-radius: 6px;
+    border: 1px solid var(--border-light);
+    background: var(--bg-white);
+    transition: all 0.2s ease;
+}
+
+.design-color .day-tag.active {
+    background: linear-gradient(135deg, var(--accent) 0%, #f06a85 100%);
+    border-color: var(--accent);
+    box-shadow: 0 3px 10px rgba(232, 93, 117, 0.4);
+    transform: translateY(-1px);
+}
+
+.design-color .table-wrapper {
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+.design-color .summary-table {
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+}
+
+.design-color .summary-table .highlight {
+    background: var(--primary);
+}
+
+.design-color .summary-table .vat-row {
+    background: var(--accent-light);
+}
+
+.design-color .summary-table .total-row {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+}
+
+.design-color .summary-table .total-row .summary-label,
+.design-color .summary-table .total-row .summary-value {
+    color: #fff;
+}
+
+.design-color .footer-section {
+    border-top-color: var(--accent);
+}
+
+.design-color .btn-primary {
+    background: linear-gradient(135deg, var(--accent) 0%, #f06a85 100%);
+    box-shadow: 0 3px 12px rgba(232, 93, 117, 0.4);
+}
+
+.design-color .btn-primary:hover {
+    background: linear-gradient(135deg, #d64d65 0%, #e85d75 100%);
+    box-shadow: 0 6px 20px rgba(232, 93, 117, 0.5);
+}
+
+.design-color .btn-secondary {
+    background: var(--bg-alt);
+    border-color: var(--border-color);
+}
+
+.design-color .btn-secondary:hover {
+    background: var(--accent-light);
+    border-color: var(--accent);
+}

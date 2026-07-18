@@ -1,0 +1,38 @@
+<section class="items-section">
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th class="col-no">No.</th>
+                <th class="col-area">청소구역</th>
+                <th class="col-task">청소내용</th>
+                <th class="col-days">작업요일</th>
+                <th class="col-qty">수량/횟수</th>
+                <th class="col-price">단가 (원)</th>
+                <th class="col-total">금액 (원)</th>
+                <th class="col-exclude">제외구역</th>
+                <th class="col-memo">비고</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td class="col-no">{{ loop.index }}</td>
+                <td class="col-area">{{ item.area }}</td>
+                <td class="col-task">{{ item.task }}</td>
+                <td class="col-days">
+                    <span class="days-badge">
+                        {% for day in item.days %}
+                            <span class="day-tag">{{ day }}</span>
+                        {% endfor %}
+                    </span>
+                </td>
+                <td class="col-qty">{{ item.qty }}회</td>
+                <td class="col-price">{{ "{:,}".format(item.unit_price) }}</td>
+                <td class="col-total">{{ "{:,}".format(item.total_price) }}</td>
+                <td class="col-exclude">{{ item.exclude_area or '-' }}</td>
+                <td class="col-memo">{{ item.memo or '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>

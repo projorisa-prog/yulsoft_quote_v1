@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko" class="design-{{ design_key }} theme-light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>견적서 - {{ quote_number }}</title>
+    
+    <!-- Google Fonts: Pretendard & Noto Serif KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;700&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Base CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', path='css/quote-base.css') }}">
+    
+    <!-- Design-specific CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', path='css/design-' ~ design_key ~ '.css') }}">
+    
+    <!-- Watermark CSS (Dynamic) -->
+    {% if watermark_text %}
+    <style>
+        @page {
+            @bottom-center {
+                content: "{{ watermark_text }}";
+                font-size: 8pt;
+                color: #ccc;
+                font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+                width: 100%;
+                text-align: center;
+                margin-bottom: 10mm;
+            }
+        }
+    </style>
+    {% endif %}
+    
+    <!-- Print-specific styles -->
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm 15mm 25mm 15mm; /* 하단 여백 늘려서 워터마크 공간 확보 */
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+    <div class="quote-container">
+        {% include "partials/header.html" %}
+        {% include "partials/items_table.html" %}
+        {% include "partials/summary.html" %}
+        {% include "partials/footer_sign.html" %}
+    </div>
+    
+    <!-- 공유/다운로드 버튼 (웹 뷰에서만 표시) -->
+    <div class="action-bar no-print">
+        <button onclick="window.print()" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5"/><path d="M18 18h2a2 2 0 0 0 2-2v-5"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>
+            인쇄/PDF 저장
+        </button>
+        <button onclick="navigator.clipboard.writeText(window.location.href)" class="btn btn-secondary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            링크 복사
+        </button>
+    </div>
+</body>
+</html>

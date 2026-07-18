@@ -1,0 +1,30 @@
+<section class="summary-section">
+    <table class="summary-table">
+        <tr>
+            <th>공급가액</th>
+            <td>{{ "{:,}".format(totals.subtotal) }} 원</td>
+        </tr>
+        {% if totals.discount_amount > 0 %}
+        <tr class="discount-row">
+            <th>할인금액</th>
+            <td>- {{ "{:,}".format(totals.discount_amount) }} 원</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <th>과세표준</th>
+            <td>{{ "{:,}".format(totals.taxable_amount) }} 원</td>
+        </tr>
+        <tr>
+            <th>부가가치세 (10%)</th>
+            <td>{{ "{:,}".format(totals.vat_amount) }} 원</td>
+        </tr>
+        <tr class="grand-total">
+            <th>합계 금액</th>
+            <td>{{ "{:,}".format(totals.grand_total) }} 원</td>
+        </tr>
+    </table>
+    
+    <div class="amount-in-words">
+        <strong>금액 합계: </strong>{{ number_to_korean(totals.grand_total) }}원정
+    </div>
+</section>
