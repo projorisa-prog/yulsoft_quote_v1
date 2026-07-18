@@ -14,11 +14,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
           fetch-depth: 0  # AI가 코드를 수정하고 Push할 수 있도록 전체 Git 히스토리를 가져옵니다.
 
       - name: Set up Python
