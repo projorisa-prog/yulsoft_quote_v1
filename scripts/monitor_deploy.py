@@ -3,6 +3,7 @@ import sys
 import time
 import subprocess
 import requests
+import httpx
 from openai import OpenAI
 
 # 환경변수 로드
@@ -50,17 +51,19 @@ def get_error_logs(deploy_id):
 
 def ask_ai_agent_to_fix(error_logs):
     """네모트론(Nemotron) API를 사용하여 에러 원인을 분석하고 코드를 수정합니다."""
-    # GitHub Secrets에서 가져올 API Key 명칭에 맞게 수정
     NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY") 
     
     if not NVIDIA_API_KEY:
         print("⚠️ NVIDIA_API_KEY가 없어 자가 치유를 진행할 수 없습니다.")
         return None
 
-    # OpenAI SDK를 활용하여 네모트론 엔드포인트와 연결합니다.
+    # 🔧 프록시 충돌을 방지하기 위해 httpx 클라이언트를 직접 생성하여 주입합니다.
+    http_client = httpx.Client(proxies={})
+
     client = OpenAI(
         base_url="https://integrate.api.nvidia.com/v1",
-        api_key=NVIDIA_API_KEY
+        api_key=NVIDIA_API_KEY,
+        http_client=http_client  # 💡 충돌 방지용 클라이언트 주입
     )
     
     prompt = f"""
@@ -82,8 +85,9 @@ def ask_ai_agent_to_fix(error_logs):
     """
     
     try:
+        # 모델명은 네모트론을 호출하도록 유지합니다.
         response = client.chat.completions.create(
-            model="nvidia/llama-3.1-nemotron-70b-instruct", # 💡 사용 중이신 네모트론 모델명으로 지정
+            model="nvidia/llama-3.1-nemotron-70b-instruct", 
             messages=[{"role": "user", "content": prompt}],
             temperature=0.2
         )
