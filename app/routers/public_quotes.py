@@ -6,7 +6,7 @@ import uuid
 from datetime import datetime, timedelta
 
 from app.database import get_db
-from app.models.quote import Quote, QuoteItem, QuoteStatus, User
+from app.models.quote import Quote, QuoteItem, QuoteStatus, User, UserPlan
 from app.schemas.quote import (
     QuoteCreateRequest, QuotePreviewResponse, QuoteCreateResponse,
     QuoteDetail, QuoteItemOutput, Totals, QuoteStatus as QuoteStatusEnum,
@@ -217,7 +217,7 @@ def get_quote(public_id: str, db: Session = Depends(get_db)):
         quote.status = QuoteStatus.EXPIRED
         db.commit()
     
-    # 응답 구성
+        # 응답 구성
     items = [
         QuoteItemOutput(
             area=item.area,
@@ -233,10 +233,18 @@ def get_quote(public_id: str, db: Session = Depends(get_db)):
         ) for item in quote.items
     ]
     
+    # QuoteSummary 필수 필드 추가
+    customer_name = quote.customer_info.get('name', '')
+    customer_phone = quote.customer_info.get('phone', '')
+    grand_total = quote.totals.get('grand_total', 0)
+    
     return QuoteDetail(
         id=quote.id,
         quote_number=quote.quote_number,
         status=quote.status,
+        customer_name=customer_name,
+        customer_phone=customer_phone,
+        grand_total=grand_total,
         customer_info=CustomerInfo(**quote.customer_info),
         supplier_info=SupplierInfo(**quote.supplier_info),
         calculation=CalculationInput(**quote.calculation_snapshot),
