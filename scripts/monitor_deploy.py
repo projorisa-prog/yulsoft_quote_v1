@@ -4,6 +4,7 @@ import time
 import subprocess
 import requests
 import httpx
+import json 
 from openai import OpenAI
 
 # 환경변수 로드
@@ -50,21 +51,19 @@ def get_error_logs(deploy_id):
     return ""
 
 def ask_ai_agent_to_fix(error_logs):
-    """네모트론(Nemotron) API를 사용하여 에러 원인을 분석하고 코드를 수정합니다."""
+    """라이브러리 의존성 충돌을 피해 네모트론 API에 직접 POST 요청을 보냅니다."""
     NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY") 
     
     if not NVIDIA_API_KEY:
         print("⚠️ NVIDIA_API_KEY가 없어 자가 치유를 진행할 수 없습니다.")
         return None
 
-    # 🔧 프록시 충돌을 방지하기 위해 httpx 클라이언트를 직접 생성하여 주입합니다.
-    http_client = httpx.Client(proxies={})
-
-    client = OpenAI(
-        base_url="https://integrate.api.nvidia.com/v1",
-        api_key=NVIDIA_API_KEY,
-        http_client=http_client  # 💡 충돌 방지용 클라이언트 주입
-    )
+    # 네모트론 API 엔드포인트 및 헤더 설정
+    url = "https://integrate.api.nvidia.com/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {NVIDIA_API_KEY}",
+        "Content-Type": "application/json"
+    }
     
     prompt = f"""
     당신은 율소프트 개발 팀의 '자가 치유 디버깅 에이전트'입니다.
@@ -84,16 +83,26 @@ def ask_ai_agent_to_fix(error_logs):
     수정된 전체 파일 코드 내용
     """
     
+    # 요청 페이로드 데이터 구성
+    payload = {
+        "model": "nvidia/llama-3.1-nemotron-70b-instruct",
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0.2
+    }
+    
     try:
-        # 모델명은 네모트론을 호출하도록 유지합니다.
-        response = client.chat.completions.create(
-            model="nvidia/llama-3.1-nemotron-70b-instruct", 
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.2
-        )
-        return response.choices[0].message.content
+        # 라이브러리 프록시 에러를 우회하여 직접 호출
+        response = requests.post(url, headers=headers, json=payload)
+        
+        if response.status_code == 200:
+            result = response.json()
+            return result['choices'][0]['message']['content']
+        else:
+            print(f"네모트론 API 응답 에러 (코드 {response.status_code}): {response.text}")
+            return None
+            
     except Exception as e:
-        print(f"네모트론 모델 호출 실패: {e}")
+        print(f"네모트론 직접 호출 중 예외 발생: {e}")
         return None
 
 def apply_patch(ai_response):
