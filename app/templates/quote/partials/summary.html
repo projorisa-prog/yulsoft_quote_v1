@@ -25,6 +25,6 @@
     </table>
     
     <div class="amount-in-words">
-        <strong>금액 합계: </strong>{{ number_to_korean(totals.grand_total) }}원정
+        <strong>금액 합계: </strong>{{ totals.grand_total | format_korean }}원정
     </div>
 </section>

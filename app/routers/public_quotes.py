@@ -3,6 +3,7 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from typing import Optional
 import uuid
+import json
 from datetime import datetime, timedelta
 
 from app.database import get_db
@@ -141,10 +142,11 @@ def create_quote(request: QuoteCreateRequest, db: Session = Depends(get_db)):
             quote_number=quote_number or generate_temp_quote_number(),
             user_id=user.id if user else None,
             status=QuoteStatus.COMPLETED,  # 생성 즉시 COMPLETED (PDF 생성 완료 시점)
-            customer_info=request.customer.model_dump(),
-            supplier_info=supplier_info.model_dump(),
-            calculation_snapshot=request.calculation.model_dump(),
-            totals=totals.model_dump(),
+            # JSON 필드들을 ensure_ascii=False로 저장하여 한글 보존
+            customer_info=json.dumps(request.customer.model_dump(), ensure_ascii=False),
+            supplier_info=json.dumps(supplier_info.model_dump(), ensure_ascii=False),
+            calculation_snapshot=json.dumps(request.calculation.model_dump(), ensure_ascii=False),
+            totals=json.dumps(totals.model_dump(), ensure_ascii=False),
             watermark_text=watermark,
             design_key=request.design_key.value,
             expires_at=expires_at
@@ -161,7 +163,7 @@ def create_quote(request: QuoteCreateRequest, db: Session = Depends(get_db)):
                 sort_order=idx,
                 area=item.area,
                 task=item.task,
-                days=item.days,
+                days=json.dumps(item.days, ensure_ascii=False),
                 qty=item.qty,
                 unit_price=item.unit_price,
                 total_price=item.total_price,
@@ -217,12 +219,12 @@ def get_quote(public_id: str, db: Session = Depends(get_db)):
         quote.status = QuoteStatus.EXPIRED
         db.commit()
     
-        # 응답 구성
+    # 응답 구성 - JSON 필드 파싱
     items = [
         QuoteItemOutput(
             area=item.area,
             task=item.task,
-            days=item.days,
+            days=json.loads(item.days) if isinstance(item.days, str) else item.days,
             qty=item.qty,
             unit_price=item.unit_price,
             total_price=item.total_price,
@@ -234,9 +236,14 @@ def get_quote(public_id: str, db: Session = Depends(get_db)):
     ]
     
     # QuoteSummary 필수 필드 추가
-    customer_name = quote.customer_info.get('name', '')
-    customer_phone = quote.customer_info.get('phone', '')
-    grand_total = quote.totals.get('grand_total', 0)
+    customer_info = json.loads(quote.customer_info) if isinstance(quote.customer_info, str) else quote.customer_info
+    supplier_info = json.loads(quote.supplier_info) if isinstance(quote.supplier_info, str) else quote.supplier_info
+    calculation_snapshot = json.loads(quote.calculation_snapshot) if isinstance(quote.calculation_snapshot, str) else quote.calculation_snapshot
+    totals_data = json.loads(quote.totals) if isinstance(quote.totals, str) else quote.totals
+    
+    customer_name = customer_info.get('name', '')
+    customer_phone = customer_info.get('phone', '')
+    grand_total = totals_data.get('grand_total', 0)
     
     return QuoteDetail(
         id=quote.id,
@@ -245,11 +252,11 @@ def get_quote(public_id: str, db: Session = Depends(get_db)):
         customer_name=customer_name,
         customer_phone=customer_phone,
         grand_total=grand_total,
-        customer_info=CustomerInfo(**quote.customer_info),
-        supplier_info=SupplierInfo(**quote.supplier_info),
-        calculation=CalculationInput(**quote.calculation_snapshot),
+        customer_info=CustomerInfo(**customer_info),
+        supplier_info=SupplierInfo(**supplier_info),
+        calculation=CalculationInput(**calculation_snapshot),
         items=items,
-        totals=Totals(**quote.totals),
+        totals=Totals(**totals_data),
         watermark_text=quote.watermark_text,
         design_key=quote.design_key,
         expires_at=quote.expires_at,

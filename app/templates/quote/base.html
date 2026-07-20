@@ -10,12 +10,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;700&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Base CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', path='css/quote-base.css') }}">
-    
-    <!-- Design-specific CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', path='css/design-' ~ design_key ~ '.css') }}">
-    
     <!-- Watermark CSS (Dynamic) -->
     {% if watermark_text %}
     <style>

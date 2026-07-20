@@ -2,9 +2,46 @@ from weasyprint import HTML, CSS
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from sqlalchemy.orm import Session
 import os
+import json
 from pathlib import Path
 
 from app.models.quote import Quote
+
+def number_to_korean(num: int) -> str:
+    """숫자를 한글 금액 표기로 변환"""
+    if num == 0:
+        return "영"
+    
+    units = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"]
+    places = ["", "십", "백", "천"]
+    groups = ["", "만", "억", "조"]
+    
+    def convert_group(group: int) -> str:
+        if group == 0:
+            return ""
+        result = ""
+        for i, place in enumerate(places):
+            digit = (group // (10 ** i)) % 10
+            if digit:
+                if digit == 1 and i > 0:
+                    result = place + result
+                else:
+                    result = units[digit] + place + result
+        return result
+    
+    result_parts = []
+    group_idx = 0
+    while num > 0:
+        group = num % 10000
+        if group:
+            part = convert_group(group)
+            if groups[group_idx]:
+                part += groups[group_idx]
+            result_parts.append(part)
+        num //= 10000
+        group_idx += 1
+    
+    return "".join(reversed(result_parts))
 
 def get_template_env() -> Environment:
     """Jinja2 템플릿 환경 설정"""
@@ -13,21 +50,32 @@ def get_template_env() -> Environment:
         loader=FileSystemLoader(str(template_dir)),
         autoescape=select_autoescape(['html', 'xml'])
     )
+    env.filters['format_korean'] = number_to_korean
     return env
-
 
 def render_quote_html(quote: Quote, db: Session) -> str:
     """견적서 HTML 렌더링"""
     env = get_template_env()
     template = env.get_template("base.html")
     
+    # JSON 필드들 파싱 (문자열인 경우)
+    def parse_json(val):
+        if isinstance(val, str):
+            return json.loads(val)
+        return val
+    
+    customer = parse_json(quote.customer_info)
+    supplier = parse_json(quote.supplier_info)
+    items = quote.items  # relationship이므로 이미 객체 리스트
+    totals = parse_json(quote.totals)
+    
     # 템플릿에 전달할 컨텍스트 구성
     context = {
         "quote": quote,
-        "customer": quote.customer_info,
-        "supplier": quote.supplier_info,
-        "items": quote.items,
-        "totals": quote.totals,
+        "customer": customer,
+        "supplier": supplier,
+        "items": items,
+        "totals": totals,
         "design_key": quote.design_key,
         "watermark_text": quote.watermark_text or "",
         "quote_number": quote.quote_number or str(quote.id),
@@ -37,7 +85,6 @@ def render_quote_html(quote: Quote, db: Session) -> str:
     }
     
     return template.render(**context)
-
 
 def generate_quote_pdf(quote: Quote, db: Session) -> bytes:
     """
@@ -75,12 +122,10 @@ def generate_quote_pdf(quote: Quote, db: Session) -> bytes:
         """)
         stylesheets.append(watermark_css)
     
-    # PDF 생성
+    # PDF 생성 - base_url은 템플릿 디렉토리로 설정
     html_doc = HTML(string=html_content, base_url=str(Path(__file__).parent.parent / "templates"))
     pdf_bytes = html_doc.write_pdf(stylesheets=stylesheets)
-    
     return pdf_bytes
-
 
 def generate_quote_pdf_to_file(quote: Quote, db: Session, output_path: str) -> str:
     """PDF를 파일로 저장하고 경로 반환"""
@@ -91,20 +136,3 @@ def generate_quote_pdf_to_file(quote: Quote, db: Session, output_path: str) -> s
         f.write(pdf_bytes)
     
     return output_path
-
-
-def generate_quote_png(quote: Quote, db: Session) -> bytes:
-    """
-    이미지(PNG) 생성 - 카카오톡 공유용 썸네일 등
-    Playwright 또는 headless chrome 필요 (MVP에서는 WeasyPrint로 PDF 생성 후 변환하거나 생략)
-    """
-    # TODO: Playwright 도입 시 구현
-    # from playwright.async_api import async_playwright
-    # html = render_quote_html(quote, db)
-    # async with async_playwright() as p:
-    #     browser = await p.chromium.launch()
-    #     page = await browser.new_page()
-    #     await page.set_content(html)
-    #     png = await page.screenshot(full_page=True)
-    #     return png
-    raise NotImplementedError("PNG generation requires Playwright. Implement later.")

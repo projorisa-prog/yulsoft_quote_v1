@@ -20,11 +20,28 @@ else:
 # SQLite인 경우: check_same_thread=False 필요, pool 설정 불필요
 # PostgreSQL인 경우: pool_pre_ping, pool_recycle 설정
 if USE_SQLITE:
+    # SQLite 연결 URI에 인코딩 명시
+    DATABASE_URL = "sqlite:///./quotation.db?charset=utf8"
     engine = create_engine(
         DATABASE_URL,
-        connect_args={"check_same_thread": False},
+        connect_args={
+            "check_same_thread": False,
+        },
         echo=False
     )
+    # SQLite 인코딩 설정 - 이벤트 리스너로 UTF-8 강제
+    from sqlalchemy import event
+    
+    @event.listens_for(engine, "connect")
+    def set_sqlite_pragma(dbapi_connection, connection_record):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA encoding='UTF-8'")
+        cursor.execute("PRAGMA foreign_keys=ON")
+        # UTF-8 텍스트 팩토리 설정 - 중요!
+        def utf8_text_factory(b):
+            return b.decode('utf-8')
+        dbapi_connection.text_factory = utf8_text_factory
+        cursor.close()
 else:
     # pool_pre_ping=True: 커넥션 풀에서 연결 유효성 검사 (Render PostgreSQL 유휴 연결 끊김 방지)
     # pool_recycle=300: 5분마다 연결 재사용 (Render free tier 유휴 타임아웃 대비)

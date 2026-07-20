@@ -66,11 +66,11 @@ class Quote(Base):
     user_id = Column(String(36), ForeignKey("users.id"), nullable=True, index=True)  # 비회원시 NULL
     status = Column(Enum(QuoteStatus), default=QuoteStatus.DRAFT, nullable=False, index=True)
     
-    # JSON 스냅샷 필드들 (SQLite/PostgreSQL 호환)
-    customer_info = Column(JSON, nullable=False)  # CustomerInfo 스키마
-    supplier_info = Column(JSON, nullable=False)  # SupplierInfo 스키마 (스냅샷)
-    calculation_snapshot = Column(JSON, nullable=False)  # CalculationInput 스키마 (재계산용)
-    totals = Column(JSON, nullable=False)  # Totals 스키마
+    # JSON 스냅샷 필드들 - Text로 저장 (UTF-8 인코딩 문제 회피)
+    customer_info = Column(Text, nullable=False)  # CustomerInfo 스키마 (JSON 문자열)
+    supplier_info = Column(Text, nullable=False)  # SupplierInfo 스키마 (스냅샷)
+    calculation_snapshot = Column(Text, nullable=False)  # CalculationInput 스키마 (재계산용)
+    totals = Column(Text, nullable=False)  # Totals 스키마
     
     watermark_text = Column(String(255), nullable=True)  # 비회원: "Powered by 율소프트"
     design_key = Column(String(20), default="classic", nullable=False)  # classic, modern, color
@@ -91,7 +91,7 @@ class QuoteItem(Base):
     
     area = Column(String(100), nullable=False)       # 청소구역 (예: 거실, 화장실)
     task = Column(String(200), nullable=False)       # 청소내용 (예: 바닥 청소, 유리 닦기)
-    days = Column(JSON, nullable=False)             # 요일 배열 ["MON", "WED", "FRI"]
+    days = Column(Text, nullable=False)             # 요일 배열 JSON 문자열 ["MON", "WED", "FRI"]
     qty = Column(Integer, default=1, nullable=False) # 수량/횟수
     unit_price = Column(Integer, default=0, nullable=False) # 단가 (원)
     total_price = Column(Integer, default=0, nullable=False) # 금액 (qty * unit_price)
@@ -119,7 +119,7 @@ class Template(Base):
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     name = Column(String(200), nullable=False)  # 예: "표준 주 2회 오피스 청소"
-    items = Column(JSON, nullable=False)  # QuoteItem 배열 템플릿
+    items = Column(Text, nullable=False)  # QuoteItem 배열 템플릿 (JSON 문자열)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
